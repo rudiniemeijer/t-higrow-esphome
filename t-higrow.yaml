@@ -1,0 +1,154 @@
+# LILYGO T-HiGrow sensor device
+
+# Change the devicename and devicename_short to something aking
+# to the name ESPhome has given the device after discovery.
+
+# Sleep duration has been set so that when the device is woken
+# with the wakup_button there is a 5 minute window to reflash
+# the software.
+
+substitutions:
+  devicename: esphome-web-1a2345
+  devicename_short: HiGrow_1a2345
+  pin_sda: GPIO25
+  pin_scl: GPIO26
+  pin_sensor_power: GPIO4
+  pin_wakeup_button: GPIO35
+  pin_dht_sensor: GPIO16
+  pin_adc_soil_moisture: GPIO32
+  pin_adc_battery: GPIO33
+  pin_adc_salt: GPIO34
+  interval_secs: 60s
+  
+# Enable logging
+logger:
+  level: debug
+
+esphome:
+  name: $devicename
+  platform: ESP32
+  board: lolin_d32
+  on_boot:
+    priority: 900
+    then:
+      - delay: 3s
+      - switch.turn_on: spower
+      - logger.log: "On-board sensors have been powered on"
+      - delay: 3s
+      - lambda: |-
+          Wire.begin();
+      - delay: 2s
+  on_shutdown:
+    then:
+      - switch.turn_off: spower
+      - logger.log: "On-board sensors have been powered off"
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: $devicename_short
+    password: !secret wifi_ap_password
+
+captive_portal:
+
+i2c:
+  sda: $pin_sda
+  scl: $pin_scl
+  scan: True
+  id: bus_a
+  setup_priority: 0
+
+deep_sleep:
+  sleep_duration: 30min
+  id: deep_sleep_system
+  wakeup_pin: $pin_wakeup_button
+  wakeup_pin_mode: INVERT_WAKEUP
+  run_duration: 
+    default: 90s
+    gpio_wakeup_reason: 5min
+
+switch:
+  - platform: gpio
+    pin: $pin_sensor_power
+    name: $devicename_short Sensor Power
+    id: spower
+    restore_mode: ALWAYS_OFF
+    internal: true
+
+binary_sensor:
+  - platform: gpio
+    pin: 
+      number: $pin_wakeup_button
+      inverted: True
+    name: $devicename_short Wakeup Button
+
+sensor:
+  - platform: dht
+    model: dht11
+    pin:
+      number: $pin_dht_sensor
+      mode: input
+    temperature:
+      name: $devicename_short Air Temperature
+    humidity:
+      name: $devicename_short Air Humidity
+    update_interval: $interval_secs
+    setup_priority: -100
+    
+  - platform: adc
+    pin: $pin_adc_soil_moisture
+    name: $devicename_short Soil Moisture
+    update_interval: 5s
+    unit_of_measurement: '%'
+    filters:
+      - calibrate_linear:
+          - 1.1 -> 0.0
+          - 0.0 -> 100.0
+      - sliding_window_moving_average:
+          window_size: 15
+          send_every: 15
+          send_first_at: 15
+    
+  - platform: adc
+    pin: $pin_adc_salt
+    name: $devicename_short Salt
+    update_interval: 5s
+    unit_of_measurement: '%'
+    filters:
+      - calibrate_linear:
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 0.0 -> 0.0
+          - 1.1 -> 100.0
+      - sliding_window_moving_average:
+          window_size: 15
+          send_every: 15
+          send_first_at: 15
+    
+  - platform: adc
+    pin: $pin_adc_battery
+    name: $devicename_short Battery
+    attenuation: 11db
+    unit_of_measurement: 'V'
+    update_interval: $interval_secs
+    accuracy_decimals: 3
+    filters:
+      - lambda: >
+          float vref = 1.1;
+          return (x / 4.095) * 6.6 * vref;
+      - filter_out: 0.25
+    
+  - platform: bh1750
+    i2c_id: bus_a
+    name: $devicename_short Illuminance
+    address: 0x23
+    update_interval: $interval_secs
+    accuracy_decimals: 0
+    setup_priority: -200
