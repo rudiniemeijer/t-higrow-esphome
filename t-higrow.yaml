@@ -8,8 +8,8 @@
 # the software.
 
 substitutions:
-  devicename: esphome-web-1a2345
-  devicename_short: HiGrow_1a2345
+  devicename: esphome-web-1a2b3c
+  devicename_short: Grow_1a2b3c
   pin_sda: GPIO25
   pin_scl: GPIO26
   pin_sensor_power: GPIO4
@@ -18,7 +18,9 @@ substitutions:
   pin_adc_soil_moisture: GPIO32
   pin_adc_battery: GPIO33
   pin_adc_salt: GPIO34
-  interval_secs: 60s
+  sleep_time_minutes: 30min
+  wake_time_seconds: 20s
+  measure_interval_seconds: 1s
   
 # Enable logging
 logger:
@@ -67,12 +69,12 @@ i2c:
   setup_priority: 0
 
 deep_sleep:
-  sleep_duration: 30min
+  sleep_duration: $sleep_time_minutes
   id: deep_sleep_system
   wakeup_pin: $pin_wakeup_button
   wakeup_pin_mode: INVERT_WAKEUP
   run_duration: 
-    default: 90s
+    default: $wake_time_seconds
     gpio_wakeup_reason: 5min
 
 switch:
@@ -89,7 +91,15 @@ binary_sensor:
       number: $pin_wakeup_button
       inverted: True
     name: $devicename_short Wakeup Button
-
+  - platform: template
+    device_class: battery_charging
+    name: $devicename_short Charging
+    id: charging
+  - platform: template
+    device_class: battery
+    name: $devicename_short Low Battery
+    id: lowbatt
+      
 sensor:
   - platform: dht
     model: dht11
@@ -98,57 +108,105 @@ sensor:
       mode: input
     temperature:
       name: $devicename_short Air Temperature
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 21
+            send_every: 9
+            send_first_at: 9
     humidity:
       name: $devicename_short Air Humidity
-    update_interval: $interval_secs
+      accuracy_decimals: 1
+      filters:
+        - sliding_window_moving_average:
+            window_size: 21
+            send_every: 9
+            send_first_at: 9
+    update_interval: $measure_interval_seconds
     setup_priority: -100
     
   - platform: adc
     pin: $pin_adc_soil_moisture
     name: $devicename_short Soil Moisture
-    update_interval: 5s
+    update_interval: $measure_interval_seconds
     unit_of_measurement: '%'
+    accuracy_decimals: 1
     filters:
       - calibrate_linear:
           - 1.1 -> 0.0
           - 0.0 -> 100.0
+      - quantile:
+          window_size: 21
+          send_every: 9
+          send_first_at: 9
+          quantile: .9
       - sliding_window_moving_average:
-          window_size: 15
-          send_every: 15
-          send_first_at: 15
+          window_size: 7
+          send_every: 3
+          send_first_at: 3
     
   - platform: adc
     pin: $pin_adc_salt
     name: $devicename_short Salt
-    update_interval: 5s
+    update_interval: 1s
     unit_of_measurement: '%'
+    accuracy_decimals: 1
     filters:
       - calibrate_linear:
           # Map 0.0 (from sensor) to 0.0 (true value)
           - 0.0 -> 0.0
           - 1.1 -> 100.0
+      - quantile:
+          window_size: 21
+          send_every: 9
+          send_first_at: 9
+          quantile: .9
       - sliding_window_moving_average:
-          window_size: 15
-          send_every: 15
-          send_first_at: 15
+          window_size: 7
+          send_every: 3
+          send_first_at: 3
     
   - platform: adc
     pin: $pin_adc_battery
     name: $devicename_short Battery
+    id: battery
     attenuation: 11db
     unit_of_measurement: 'V'
-    update_interval: $interval_secs
+    update_interval: $measure_interval_seconds
     accuracy_decimals: 3
     filters:
       - lambda: >
-          float vref = 1.1;
-          return (x / 4.095) * 6.6 * vref;
-      - filter_out: 0.25
-    
+          float VREF = 1.1;
+          float batt = (x / 4.095) * 6.6 * VREF;
+          if (batt > 1.0) return batt;
+          else return {};
+      - filter_out: NaN
+      - sliding_window_moving_average:
+          window_size: 21
+          send_every: 9
+          send_first_at: 9
+    on_value:
+      - lambda: >
+          if (x > 4.0) {
+            id(charging).publish_state(true);
+            id(deep_sleep_system).prevent_deep_sleep();
+          }
+          else {
+            id(charging).publish_state(false);
+            // id(deep_sleep_system).allow_deep_sleep();
+          }
+          if (x < 2.5) id(lowbatt).publish_state(true);
+          else id(lowbatt).publish_state(false);
+
   - platform: bh1750
     i2c_id: bus_a
     name: $devicename_short Illuminance
     address: 0x23
-    update_interval: $interval_secs
-    accuracy_decimals: 0
+    update_interval: $measure_interval_seconds
+    accuracy_decimals: 1
     setup_priority: -200
+    filters:
+      - sliding_window_moving_average:
+          window_size: 21
+          send_every: 9
+          send_first_at: 9
