@@ -8,8 +8,8 @@
 # the software.
 
 substitutions:
-  devicename: esphome-web-1d7610
-  devicename_short: Grow_1d7610
+  devicename: esphome-web-1a2345
+  devicename_short: Grow_1a2345
   pin_sda: GPIO25
   pin_scl: GPIO26
   pin_sensor_power: GPIO4
