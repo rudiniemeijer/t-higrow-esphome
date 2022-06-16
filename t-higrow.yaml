@@ -20,7 +20,6 @@ substitutions:
   pin_adc_salt: GPIO34
   sleep_time_minutes: 30min
   wake_time_seconds: 20s
-  measure_interval_seconds: 1s
   
 # Enable logging
 logger:
@@ -122,24 +121,26 @@ sensor:
             window_size: 21
             send_every: 9
             send_first_at: 9
-    update_interval: $measure_interval_seconds
+    update_interval: 1s
     setup_priority: -100
     
   - platform: adc
     pin: $pin_adc_soil_moisture
     name: $devicename_short Soil Moisture
-    update_interval: $measure_interval_seconds
+    # Capacitive measuring circuitry does not play nice with
+    # 1-second measuring interval, so keep interval higher
+    update_interval: 20s
+    attenuation: 11db
     unit_of_measurement: '%'
-    accuracy_decimals: 0
+    accuracy_decimals: 1
     filters:
       - calibrate_linear:
-          - 1.1 -> 0.0
-          - 0.0 -> 100.0
-      - quantile:
-          window_size: 21
-          send_every: 11
-          send_first_at: 11
-          quantile: .9
+          # Map 0.0 (from sensor) to 0.0 (true value)
+          - 3.08 -> 0.0
+          - 1.42 -> 100.0
+      - lambda: >
+          if (x < 0 or x > 100) return {};
+          else return x;
     
   - platform: adc
     pin: $pin_adc_salt
@@ -151,11 +152,11 @@ sensor:
       - calibrate_linear:
           # Map 0.0 (from sensor) to 0.0 (true value)
           - 0.0 -> 0.0
-          - 1.1 -> 100.0
+          - 0.512 -> 100.0
       - sliding_window_moving_average:
-          window_size: 15
-          send_every: 7
-          send_first_at: 7
+          window_size: 25
+          send_every: 21
+          send_first_at: 21
     
   - platform: adc
     pin: $pin_adc_battery
@@ -163,7 +164,7 @@ sensor:
     id: battery
     attenuation: 11db
     unit_of_measurement: 'V'
-    update_interval: $measure_interval_seconds
+    update_interval: 1s
     accuracy_decimals: 3
     filters:
       - lambda: >
@@ -193,7 +194,7 @@ sensor:
     i2c_id: bus_a
     name: $devicename_short Illuminance
     address: 0x23
-    update_interval: $measure_interval_seconds
+    update_interval: 1s
     accuracy_decimals: 1
     setup_priority: -200
     filters:
