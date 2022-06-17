@@ -26,6 +26,7 @@ The BH1750 sensor measures light and has a I2C interface. The SDA pin is connect
 ### Deep Sleep workarounds
 
 ## Home Assistant integration
+![A possible display of the T-HiGro entities in Home Assistant](https://github.com/rudiniemeijer/t-higrow-esphome/blob/a93519f81fea08ca37844c24e619a53078a01fc5/possible%20home%20assistant%20display.png)
 
 
 
