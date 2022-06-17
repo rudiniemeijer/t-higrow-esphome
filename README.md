@@ -10,10 +10,12 @@ The T-HiGrow has a number of sensors, some of which can be extended by conversio
 ### DHT11 temperature and air humidity sensor
 The DHT11 sensor is factory calibrated and outputs serial data through a single data pin. The data pin from the DHT11 is connected to GPIO16 of the ESP32 microcontroller. The output given by the data pin is 8 bit humidity integer data + 8 bit the humidity fractional data + 8 bit temperature integer data + 8 bit fractional temperature data + 8 bit parity bit. The DHT11 has been specified with an operating current of 0.3 mA and a standby current of 60 µA. Its temperature range is 0 °C - 50 °C and its humidity range 20% to 90%, with a ±1 °C and ±1 % accuracy.
 
-[DHT11 data sheet](https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf)
+[DHT11 data sheet](https://akizukidenshi.com/download/ds/aosong/DHT11.pdf)
 
 ### BH1750 illuminance sensor
 The BH1750 sensor measures light and has a I2C interface. The SDA pin is connected to GPIO25 and the SCL pin is connected to GPIO26.
+
+[BH1750 data sheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf)
 
 ### ADC battery voltage
 
