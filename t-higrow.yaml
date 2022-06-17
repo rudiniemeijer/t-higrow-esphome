@@ -17,7 +17,7 @@ substitutions:
   pin_dht_sensor: GPIO16
   pin_adc_soil_moisture: GPIO32
   pin_adc_battery: GPIO33
-  pin_adc_salt: GPIO34
+  pin_adc_soil_conductivity: GPIO34
   sleep_time_minutes: 30min
   wake_time_seconds: 20s
   
@@ -56,7 +56,7 @@ wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: $devicename_short
-    password: !secret wifi_ap_password
+    password: "Big-Secret5"
 
 captive_portal:
 
@@ -142,17 +142,33 @@ sensor:
           if (x < 0 or x > 100) return {};
           else return x;
     
+  # - platform: adc
+  #   pin: $pin_adc_salt
+  #   name: $devicename_short Salt
+  #   update_interval: 1s
+  #   unit_of_measurement: '%'
+  #   accuracy_decimals: 1
+  #   filters:
+  #     - calibrate_linear:
+  #         # Map 0.0 (from sensor) to 0.0 (true value)
+  #         - 0.0 -> 0.0
+  #         - 0.512 -> 100.0
+  #     - sliding_window_moving_average:
+  #         window_size: 25
+  #         send_every: 21
+  #         send_first_at: 21
+  
   - platform: adc
-    pin: $pin_adc_salt
-    name: $devicename_short Salt
+    pin: $pin_adc_soil_conductivity
+    name: $devicename_short Soil Conductivity
     update_interval: 1s
-    unit_of_measurement: '%'
+    unit_of_measurement: 'µS/cm'
     accuracy_decimals: 1
     filters:
       - calibrate_linear:
           # Map 0.0 (from sensor) to 0.0 (true value)
           - 0.0 -> 0.0
-          - 0.512 -> 100.0
+          - 0.512 -> 3000
       - sliding_window_moving_average:
           window_size: 25
           send_every: 21
@@ -181,14 +197,27 @@ sensor:
       - lambda: >
           if (x > 4.0) {
             id(charging).publish_state(true);
+            id(battcap).publish_state({});
+            
             id(deep_sleep_system).prevent_deep_sleep();
           }
           else {
+            if (x < 2.5) id(lowbatt).publish_state(true);
+            else id(lowbatt).publish_state(false);
+
             id(charging).publish_state(false);
+
+            id(battcap).publish_state(((x - 2.0) / (4.0 - 2.0)) * 100);
+
             // id(deep_sleep_system).allow_deep_sleep();
           }
-          if (x < 2.5) id(lowbatt).publish_state(true);
-          else id(lowbatt).publish_state(false);
+
+  - platform: template
+    device_class: battery
+    name: $devicename_short Battery Capacity
+    id: battcap
+    accuracy_decimals: 1
+    unit_of_measurement: '%'
 
   - platform: bh1750
     i2c_id: bus_a
