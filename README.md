@@ -1,4 +1,4 @@
-([t-higrow in action.png](https://github.com/rudiniemeijer/t-higrow-esphome/blob/36cfcc733363cfb44e0d04b88e12d74eab741e77/t-higrow%20in%20action.png))
+[t-higrow in action.png](https://github.com/rudiniemeijer/t-higrow-esphome/blob/36cfcc733363cfb44e0d04b88e12d74eab741e77/t-higrow%20in%20action.png)
 
 # T-HiGrow for ESPhome and Home Assistant
 
