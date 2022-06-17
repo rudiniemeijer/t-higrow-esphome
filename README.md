@@ -1,4 +1,4 @@
-![](t-higrow in action.png)
+![Picture of a plant sensor in the Monstera pot](t-higrow in action.png)
 
 # T-HiGrow for ESPhome and Home Assistant
 
