@@ -201,12 +201,12 @@ sensor:
     i2c_id: bus_a
     name: $devicename_short Illuminance
     address: 0x23
-    update_interval: 5s
+    update_interval: 1s
     accuracy_decimals: 1
     setup_priority: -200
     filters:
       - sliding_window_moving_average:
-          window_size: 7
-          send_every: 3
-          send_first_at: 3
+          window_size: 25
+          send_every: 13
+          send_first_at: 13
     
