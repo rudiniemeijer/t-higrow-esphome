@@ -34,7 +34,9 @@ esphome:
     then:
       - delay: 3s
       - switch.turn_on: spower
-      - logger.log: "On-board sensors have been powered on"
+      - logger.log:
+          level: info
+          format: "On-board sensors have been powered on"
       - delay: 3s
       - lambda: |-
           Wire.begin();
@@ -42,8 +44,9 @@ esphome:
   on_shutdown:
     then:
       - switch.turn_off: spower
-      - logger.log: "On-board sensors have been powered off"
-
+      - logger.log:
+          level: info
+          format: "On-board sensors have been powered off"
 # Enable Home Assistant API
 api:
 
