@@ -18,6 +18,14 @@ The BH1750 sensor measures light and has a I2C interface. The SDA pin is connect
 [BH1750 data sheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf)
 
 ### ADC battery voltage
+Battery voltage is supplied to GPIO33. 
+
+| Description | Charging | Voltage |
+| ----------- | -------- | ------- |
+| Empty       |       No |  2.55 V |
+| Full        |       No |  3.62 V |
+| Empty       |      Yes |  3.93 V |
+| Full        |      Yes |  4.24 V |
 
 ### ADC capacitive soil moisture
 
