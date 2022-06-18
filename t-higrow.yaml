@@ -8,8 +8,8 @@
 # the software.
 
 substitutions:
-  devicename: esphome-web-1a2345
-  devicename_short: Grow_1a2345
+  devicename: esphome-web-1b2345
+  devicename_short: Grow_1b2345
   pin_sda: GPIO25
   pin_scl: GPIO26
   pin_sensor_power: GPIO4
@@ -23,7 +23,7 @@ substitutions:
   
 # Enable logging
 logger:
-  level: debug
+  level: info
 
 esphome:
   name: $devicename
@@ -56,7 +56,7 @@ wifi:
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: $devicename_short
-    password: "Big-Secret5"
+    password: "Grow-Good1"
 
 captive_portal:
 
@@ -94,10 +94,6 @@ binary_sensor:
     device_class: battery_charging
     name: $devicename_short Charging
     id: charging
-  - platform: template
-    device_class: battery
-    name: $devicename_short Low Battery
-    id: lowbatt
       
 sensor:
   - platform: dht
@@ -190,24 +186,21 @@ sensor:
           else return {};
       - filter_out: NaN
       - sliding_window_moving_average:
-          window_size: 21
-          send_every: 9
-          send_first_at: 9
+          window_size: 25
+          send_every: 11
+          send_first_at: 11
     on_value:
       - lambda: >
-          if (x > 4.0) {
+          if (x > 3.8) {
             id(charging).publish_state(true);
-            id(battcap).publish_state({});
+            id(battcap).publish_state(((x - 3.93) / (4.24 - 3.93)) * 100);
             
-            id(deep_sleep_system).prevent_deep_sleep();
+            // id(deep_sleep_system).prevent_deep_sleep();
           }
           else {
-            if (x < 2.5) id(lowbatt).publish_state(true);
-            else id(lowbatt).publish_state(false);
-
             id(charging).publish_state(false);
 
-            id(battcap).publish_state(((x - 2.0) / (4.0 - 2.0)) * 100);
+            id(battcap).publish_state(((x - 2.55) / (3.62 - 2.55)) * 100);
 
             // id(deep_sleep_system).allow_deep_sleep();
           }
