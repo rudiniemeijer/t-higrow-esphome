@@ -137,22 +137,6 @@ sensor:
       - lambda: >
           if (x < 0 or x > 100) return {};
           else return x;
-    
-  # - platform: adc
-  #   pin: $pin_adc_salt
-  #   name: $devicename_short Salt
-  #   update_interval: 1s
-  #   unit_of_measurement: '%'
-  #   accuracy_decimals: 1
-  #   filters:
-  #     - calibrate_linear:
-  #         # Map 0.0 (from sensor) to 0.0 (true value)
-  #         - 0.0 -> 0.0
-  #         - 0.512 -> 100.0
-  #     - sliding_window_moving_average:
-  #         window_size: 25
-  #         send_every: 21
-  #         send_first_at: 21
   
   - platform: adc
     pin: $pin_adc_soil_conductivity
@@ -194,14 +178,10 @@ sensor:
           if (x > 3.8) {
             id(charging).publish_state(true);
             id(battcap).publish_state(((x - 3.93) / (4.24 - 3.93)) * 100);
-            
             // id(deep_sleep_system).prevent_deep_sleep();
-          }
-          else {
+          } else {
             id(charging).publish_state(false);
-
-            id(battcap).publish_state(((x - 2.55) / (3.62 - 2.55)) * 100);
-
+            id(battcap).publish_state(((x - 2.55) / (3.65 - 2.55)) * 100);
             // id(deep_sleep_system).allow_deep_sleep();
           }
 
