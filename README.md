@@ -18,7 +18,7 @@ The BH1750 sensor measures light and has a I2C interface. The SDA pin is connect
 [BH1750 data sheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf)
 
 ### ADC battery voltage
-Battery voltage is supplied to GPIO33. The ADC has a reference voltage of 1.1 V, giving a theoretical range of 0-1.1 V as input. However, [Espressiv states](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t) that the input voltage should be in range 0.1 - 0.950
+Battery voltage is supplied to GPIO33. The ADC has a reference voltage of 1.1 V, giving a theoretical range of 0-1.1 V as input. However, [Espressiv states](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t) that the input voltage should be in range 0.1 - 0.950 V for the maximum accurcy.
 
 | Description | Charging | Voltage |
 | ----------- | -------- | ------- |
