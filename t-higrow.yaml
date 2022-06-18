@@ -7,6 +7,8 @@
 # with the wakup_button there is a 5 minute window to reflash
 # the software.
 
+# LILYGO HiGrow sensor device
+
 substitutions:
   devicename: esphome-web-1b2345
   devicename_short: Grow_1b2345
@@ -18,7 +20,7 @@ substitutions:
   pin_adc_soil_moisture: GPIO32
   pin_adc_battery: GPIO33
   pin_adc_soil_conductivity: GPIO34
-  sleep_time_minutes: 30min
+  sleep_time_minutes: 60min
   wake_time_seconds: 20s
   
 # Enable logging
@@ -47,6 +49,7 @@ esphome:
       - logger.log:
           level: info
           format: "On-board sensors have been powered off"
+
 # Enable Home Assistant API
 api:
 
@@ -55,11 +58,11 @@ ota:
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
-
-  # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: $devicename_short
-    password: "Grow-Good1"
+    password: "Free-drinks"
+  fast_connect: true
+  power_save_mode: high
 
 captive_portal:
 
@@ -153,8 +156,8 @@ sensor:
           - 0.512 -> 3000
       - sliding_window_moving_average:
           window_size: 25
-          send_every: 11
-          send_first_at: 11
+          send_every: 13
+          send_first_at: 13
     
   - platform: adc
     pin: $pin_adc_battery
@@ -206,3 +209,4 @@ sensor:
           window_size: 7
           send_every: 3
           send_first_at: 3
+    
