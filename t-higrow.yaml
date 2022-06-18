@@ -109,18 +109,18 @@ sensor:
       accuracy_decimals: 1
       filters:
         - sliding_window_moving_average:
-            window_size: 25
-            send_every: 11
-            send_first_at: 11
+            window_size: 7
+            send_every: 3
+            send_first_at: 3
     humidity:
       name: $devicename_short Air Humidity
       accuracy_decimals: 1
       filters:
         - sliding_window_moving_average:
-            window_size: 25
-            send_every: 11
-            send_first_at: 11
-    update_interval: 1s
+            window_size: 7
+            send_every: 3
+            send_first_at: 3
+    update_interval: 5s
     setup_priority: -100
     
   - platform: adc
@@ -198,11 +198,11 @@ sensor:
     i2c_id: bus_a
     name: $devicename_short Illuminance
     address: 0x23
-    update_interval: 1s
+    update_interval: 5s
     accuracy_decimals: 1
     setup_priority: -200
     filters:
       - sliding_window_moving_average:
-          window_size: 25
-          send_every: 11
-          send_first_at: 11
+          window_size: 7
+          send_every: 3
+          send_first_at: 3
