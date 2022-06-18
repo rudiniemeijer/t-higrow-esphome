@@ -106,17 +106,17 @@ sensor:
       accuracy_decimals: 1
       filters:
         - sliding_window_moving_average:
-            window_size: 21
-            send_every: 9
-            send_first_at: 9
+            window_size: 25
+            send_every: 11
+            send_first_at: 11
     humidity:
       name: $devicename_short Air Humidity
       accuracy_decimals: 1
       filters:
         - sliding_window_moving_average:
-            window_size: 21
-            send_every: 9
-            send_first_at: 9
+            window_size: 25
+            send_every: 11
+            send_first_at: 11
     update_interval: 1s
     setup_priority: -100
     
@@ -137,7 +137,7 @@ sensor:
       - lambda: >
           if (x < 0 or x > 100) return {};
           else return x;
-  
+
   - platform: adc
     pin: $pin_adc_soil_conductivity
     name: $devicename_short Soil Conductivity
@@ -146,13 +146,12 @@ sensor:
     accuracy_decimals: 1
     filters:
       - calibrate_linear:
-          # Map 0.0 (from sensor) to 0.0 (true value)
           - 0.0 -> 0.0
           - 0.512 -> 3000
       - sliding_window_moving_average:
           window_size: 25
-          send_every: 21
-          send_first_at: 21
+          send_every: 11
+          send_first_at: 11
     
   - platform: adc
     pin: $pin_adc_battery
@@ -201,6 +200,6 @@ sensor:
     setup_priority: -200
     filters:
       - sliding_window_moving_average:
-          window_size: 21
-          send_every: 9
-          send_first_at: 9
+          window_size: 25
+          send_every: 11
+          send_first_at: 11
