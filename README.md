@@ -2,7 +2,20 @@
 
 # T-HiGrow for ESPhome and Home Assistant
 
-The LilyGo T-HiGrow device has been designed to work on a single LiPo battery. The incorporated ESP32 microcontroller has a deep sleep mode that is supported by ESPhome. Getting the sensors to work after deep sleep has proven to be something of a challenge. This configuration file is a succesful implementation of getting all the sensors to work reliably, while reducing the power to almost nothing once in deep sleep.
+The LilyGo T-HiGrow ESP32-based plant sensor device has been designed to work on a single LiPo battery. The incorporated ESP32 microcontroller has a deep sleep mode that is supported by ESPhome. Getting the sensors to work after deep sleep has proven to be something of a challenge. This configuration file is a succesful implementation of getting all the sensors to work reliably, while reducing the power to almost nothing once in deep sleep.
+
+Buy it from the official LilyGo store on AliExpress: https://nl.aliexpress.com/item/32815782900.html
+Or from the Dutch TinyTronics (has some older versions): https://www.tinytronics.nl/shop/nl/development-boards/microcontroller-boards/met-wi-fi/lilygo-ttgo-t-higrow-esp32-dht11-sensor-met-behuizing-en-accu
+
+## References
+I have studied (and used some of) the examples and code of the following repositories and publications. While some of them were hulpful, or even mostly usable, none of the examples had a working ESPhome implementation combining deep sleep, calibrated sensor readings and/or an interface to the Home Assistant Plant entity.
+
+https://github.com/pesor/TTGO-T-HIGrow
+https://github.com/Xinyuan-LilyGO/LilyGo-HiGrow
+https://gist.github.com/electron64/f4d5c947124febda1a1fc5cb4afe85a7
+https://www.tindie.com/products/lilygo/lilygottgo-t-higrow/
+https://gist.github.com/WoLpH/bc284ba9aeb5d1263f72d6294e239c1a
+https://community.home-assistant.io/t/ttgo-higrow-with-esphome/144053
 
 ## Sensors, conversions and calibration
 The T-HiGrow has a number of sensors, some of which can be extended by conversions or state observations. Below, the sensors and possible conversions are discussed.
