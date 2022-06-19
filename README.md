@@ -17,6 +17,23 @@ I have studied (and used some of) the examples and code of the following reposit
 - https://gist.github.com/WoLpH/bc284ba9aeb5d1263f72d6294e239c1a
 - https://community.home-assistant.io/t/ttgo-higrow-with-esphome/144053
 
+## T-HiGrow circuit
+
+### Voltages used
+
+| Description | Voltage | Source |
+| ----------- | ------- | ------ |
+| VBUS        |    5 V  | USB-C  |
+| VBAT        |   3.7V - 4.2V  | Lithium Ion battery |
+| +5V         |   3.7V - 5V | If VBUS is present, otherwise VBAT |
+| VDD3V3      |   3.3V  |        |
+|
+
+### Battery charging
+VBUS is connected to a TP4054 Linear Li-lon Battery Charger that outputs a constant 4.2 V with a programmed current (using a 2k resistor) of 580 mA. An led signals the charging process; once the led dims, the charging is complete.
+
+### Switching 
+
 ## Sensors, conversions and calibration
 The T-HiGrow has a number of sensors, some of which can be extended by conversions or state observations. Below, the sensors and possible conversions are discussed.
 
@@ -31,7 +48,7 @@ The BH1750 sensor measures light and has a I2C interface. It provides 16-bit lig
 [BH1750 data sheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf)
 
 ### ADC battery voltage
-Battery voltage is supplied to GPIO33. The ADC has a reference voltage of 1.1 V, giving a theoretical range of 0-1.1 V as input. However, [Espressiv states](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t) that the input voltage should be in range 0.1 - 0.950 V for the maximum accurcy.
+Battery voltage is supplied to GPIO33, which is capable of reading an analog voltage using 12-bit analog to digital conversion. The ADC has a reference voltage of 1.1 V, giving a theoretical range of 0 - 1.1 V as input. However, [Espressiv states](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/adc.html#_CPPv425adc1_config_channel_atten14adc1_channel_t11adc_atten_t) that the input voltage should be in range 0.1 - 0.950 V for the maximum accuracy. Also, an internal attenuation of up to 11 dB can be used, that stretches the input range to 0.150 V - 2.450 V. As the lithium battery has an expected battery range from 0 to up to 5 volts while charging, a voltage divider with two 100k resistors is used, that divides the battery voltage in half. The formula used is VBATT = (VADC / 4.095) * 6.6 * VREF, where VADC is the measured voltage, VREF = 1.1 and VBATT is the calculated battery voltage in volts.
 
 | Description | Charging | Voltage |
 | ----------- | -------- | ------- |
@@ -40,7 +57,16 @@ Battery voltage is supplied to GPIO33. The ADC has a reference voltage of 1.1 V,
 | Empty       |      Yes |  3.93 V |
 | Full        |      Yes |  4.24 V |
 
+[Espressif documentation for ADC measurements]()
+
 ### ADC capacitive soil moisture
+The sensor electronics for the soil moisture sensor are built around a 555 timer IC, that is setup to form an oscillator where the PCB traces are part of the circuitry that determine the frequency. The soil moisture changes the capacitance and the oscillation frequency changes. The frequency is 
+
+The timer and the other supportive components form an oscillator that works on a set frequency. Since the measuring part of the sensor is made out of two PCB tracks on the board, they act as a capacitor that is connected to this oscillating circuit.
+
+Once the sensor is placed in soil, the moisture in the soil changes the capacitance of this capacitor, and with that, the frequency of oscillation on the 555 timer is changed.
+
+This change in frequency is then translated to an analog voltage from 1 to 3 volts and this can then be detected with an Arduino and translated into a percentage.
 
 ### ADC conductivity
 
