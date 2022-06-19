@@ -21,12 +21,12 @@ I have studied (and used some of) the examples and code of the following reposit
 The T-HiGrow has a number of sensors, some of which can be extended by conversions or state observations. Below, the sensors and possible conversions are discussed.
 
 ### DHT11 temperature and air humidity sensor
-The DHT11 sensor is factory calibrated and outputs serial data through a single data pin. The data pin from the DHT11 is connected to GPIO16 of the ESP32 microcontroller. The output given by the data pin is 8 bit humidity integer data + 8 bit the humidity fractional data + 8 bit temperature integer data + 8 bit fractional temperature data + 8 bit parity bit. The DHT11 has been specified with an operating current of 0.3 mA and a standby current of 60 µA. Its temperature range is 0 °C - 50 °C and its humidity range 20% to 90%, with a ±1 °C and ±1 % accuracy.
+The DHT11 sensor is a combined household-level air temperature and humidity sensor. It is factory calibrated and outputs serial data through a single data pin. The data pin from the DHT11 is connected to GPIO16 of the ESP32 microcontroller. The output given by the data pin is 8 bit humidity integer data + 8 bit the humidity fractional data + 8 bit temperature integer data + 8 bit fractional temperature data + 8 bit parity bit. The DHT11 has been specified with an operating current of 0.3 mA and a standby current of 60 µA. Its temperature range is 0 °C - 50 °C and its humidity range 20% to 90%, with a ±1 °C and ±1 % accuracy.
 
 [DHT11 data sheet](https://akizukidenshi.com/download/ds/aosong/DHT11.pdf)
 
 ### BH1750 illuminance sensor
-The BH1750 sensor measures light and has a I2C interface. The SDA pin is connected to GPIO25 and the SCL pin is connected to GPIO26.
+The BH1750 sensor measures light and has a I2C interface. It provides 16-bit light measurements in lux, specified from 0 to 65K+ lux. The SDA pin is connected to GPIO25 and the SCL pin is connected to GPIO26. ESPhome uses the Arduino Wire library to communicate with the BH1750 over I2C. This library depends on the wire.begin() function to be called in order to power up I2C devices. The BH1750 has its own power saving measures and wakes up once called from I2C. Experimentation shows that after deep sleep from the ESP32, either the I2C communication in general, or the BH1750 specifically, do not respond reliably. That can be corrected by a wire.begin() and some strategically placed waits.
 
 [BH1750 data sheet](http://www.mouser.com/ds/2/348/bh1750fvi-e-186247.pdf)
 
