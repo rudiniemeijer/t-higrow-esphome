@@ -207,6 +207,6 @@ sensor:
     filters:
       - sliding_window_moving_average:
           window_size: 25
-          send_every: 13
-          send_first_at: 13
+          send_every: 11
+          send_first_at: 11
     
