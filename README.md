@@ -24,10 +24,11 @@ I have studied (and used some of) the examples and code of the following reposit
 | Description | Voltage | Source |
 | ----------- | ------- | ------ |
 | VBUS        |    5 V  | USB-C  |
+| BAT         |         |        |
 | VBAT        |   3.7V - 4.2V  | Lithium Ion battery |
 | +5V         |   3.7V - 5V | If VBUS is present, otherwise VBAT |
-| VDD3V3      |   3.3V  |        |
-|
+| VDD3V3      |   3.3V  |   Regulated from +5V |
+| V3V         |    3.3V | Switched with GPIO4 |
 
 ### Battery charging
 VBUS is connected to a TP4054 Linear Li-lon Battery Charger that outputs a constant 4.2 V with a programmed current (using a 2k resistor) of 580 mA. An led signals the charging process; once the led dims, the charging is complete.
