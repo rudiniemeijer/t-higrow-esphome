@@ -2,7 +2,7 @@
 
 # T-HiGrow for ESPhome and Home Assistant
 
-The LilyGo T-HiGrow ESP32-based plant sensor device has been designed to work on a single LiPo battery. The incorporated ESP32 microcontroller has a deep sleep mode that is supported by ESPhome. Getting the sensors to work after deep sleep has proven to be something of a challenge. This configuration file is a succesful implementation of getting all the sensors to work reliably, while reducing the power to almost nothing once in deep sleep.
+If you want to integrate your plants with Home Assistant, few options are available. The most well known solution are the The LilyGo T-HiGrow ESP32-based plant sensor device has been designed to work on a single LiPo battery. The incorporated ESP32 microcontroller has a deep sleep mode that is supported by ESPhome. Getting the sensors to work after deep sleep has proven to be something of a challenge. This configuration file is a succesful implementation of getting all the sensors to work reliably, while reducing the power to almost nothing once in deep sleep.
 
 - Buy it from the official LilyGo store on AliExpress: https://nl.aliexpress.com/item/32815782900.html
 - Or from the Dutch TinyTronics (has some older versions): https://www.tinytronics.nl/shop/nl/development-boards/microcontroller-boards/met-wi-fi/lilygo-ttgo-t-higrow-esp32-dht11-sensor-met-behuizing-en-accu
